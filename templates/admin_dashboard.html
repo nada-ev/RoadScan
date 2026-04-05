@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - RoadScan</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  :root { --primary: #1DC9A4; --dark: #1a1a2e; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; }
+  .topbar { background: var(--dark); padding: 14px 0; }
+  .topbar .brand { font-size: 20px; font-weight: 800; color: var(--primary); }
+  .topbar .brand span { color: #fff; }
+  .topbar a { color: #adb5bd; font-size: 14px; text-decoration: none; }
+  .topbar a:hover { color: var(--primary); }
+  .page-header { background: linear-gradient(135deg, var(--dark), #0f3460); padding: 40px 0 30px; color: #fff; }
+  .page-header h2 { font-weight: 800; font-size: 28px; margin: 0; }
+  .page-header p { color: rgba(255,255,255,0.6); margin: 4px 0 0; }
+  .stat-card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); border-left: 4px solid var(--primary); }
+  .stat-card h3 { font-size: 32px; font-weight: 800; color: var(--dark); margin: 0; }
+  .stat-card p { color: #6c757d; margin: 4px 0 0; font-size: 13px; }
+  .stat-card i { font-size: 28px; color: var(--primary); }
+  .table-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
+  .table-card .card-header { background: var(--dark); color: #fff; font-weight: 700; font-size: 16px; padding: 16px 24px; border: none; }
+  .table-responsive { max-height: 600px; overflow-y: auto; }
+  table { margin: 0; }
+  thead th { background: #f8f9fa; color: var(--dark); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid #e9ecef; padding: 14px 12px; position: sticky; top: 0; z-index: 1; }
+  tbody td { padding: 12px; vertical-align: middle; font-size: 13px; border-bottom: 1px solid #f1f3f5; }
+  tbody tr:hover td { background: #f8fffe; }
+  td img { width: 72px; height: 54px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: .2s; }
+  td img:hover { transform: scale(1.08); }
+  .badge-severity { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge-Severe   { background: #fde8e8; color: #e74c3c; }
+  .badge-Moderate { background: #fef3e2; color: #f39c12; }
+  .badge-Minor    { background: #e8faf5; color: #1DC9A4; }
+  .status-select { background: #f8f9fa; border: 1.5px solid #e9ecef; border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--dark); }
+  .status-select:focus { outline: none; border-color: var(--primary); }
+  .badge-status { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-left: 6px; }
+  .badge-Pending  { background: #fef3e2; color: #f39c12; }
+  .badge-Reviewed { background: #e8f4fd; color: #3498db; }
+  .badge-Fixed    { background: #e8faf5; color: #1DC9A4; }
+  #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; }
+  #modal-overlay.show { display: flex; }
+  #modal-overlay img { max-width: 88vw; max-height: 82vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  #modal-close { position: absolute; top: 20px; right: 28px; font-size: 36px; cursor: pointer; color: #fff; line-height: 1; }
+  .user-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: underline dotted; }
+  .user-link:hover { color: #17a98a; }
+  #user-modal .modal-header { background: var(--dark); color: #fff; border-radius: 12px 12px 0 0; }
+  #user-modal .modal-content { border-radius: 12px; border: none; }
+  .user-detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f3f5; font-size: 14px; }
+  .user-detail-row:last-child { border-bottom: none; }
+  .user-detail-label { color: #6c757d; font-weight: 600; }
+  .user-stat-badge { background: rgba(29,201,164,0.1); color: var(--primary); border-radius: 8px; padding: 4px 12px; font-weight: 700; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="brand"><i class="fas fa-road mr-2"></i>Road<span>Scan</span> <small style="color:#adb5bd;font-size:12px;font-weight:400;">Admin</small></div>
+    <a href="/"><i class="fas fa-sign-out-alt mr-1"></i>Logout</a>
+  </div>
+</div>
+
+<div class="page-header">
+  <div class="container">
+    <h2><i class="fas fa-tachometer-alt mr-2" style="color:var(--primary)"></i>Admin Dashboard</h2>
+    <p>Manage and update pothole reports</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- STAT CARDS -->
+  <div class="row mb-4" id="stats-row">
+    <div class="col-md-3 col-6 mb-3">
+      <div class="stat-card d-flex justify-content-between align-items-center">
+        <div><h3 id="stat-total">-</h3><p>Total Reports</p></div>
+        <i class="fas fa-list"></i>
+      </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+      <div class="stat-card d-flex justify-content-between align-items-center" style="border-color:#e74c3c">
+        <div><h3 id="stat-severe" style="color:#e74c3c">-</h3><p>Severe</p></div>
+        <i class="fas fa-exclamation-circle" style="color:#e74c3c"></i>
+      </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+      <div class="stat-card d-flex justify-content-between align-items-center" style="border-color:#f39c12">
+        <div><h3 id="stat-pending" style="color:#f39c12">-</h3><p>Pending</p></div>
+        <i class="fas fa-clock" style="color:#f39c12"></i>
+      </div>
+    </div>
+    <div class="col-md-3 col-6 mb-3">
+      <div class="stat-card d-flex justify-content-between align-items-center" style="border-color:#3498db">
+        <div><h3 id="stat-fixed" style="color:#3498db">-</h3><p>Fixed</p></div>
+        <i class="fas fa-check-circle" style="color:#3498db"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span><i class="fas fa-table mr-2"></i>Pothole Reports</span>
+      <button class="btn btn-sm" style="background:var(--primary);color:#fff;border-radius:8px;" onclick="loadPotholes()">
+        <i class="fas fa-sync-alt mr-1"></i>Refresh
+      </button>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>#</th><th>Image</th><th>Severity</th>
+            <th>Location</th><th>Date</th><th>Time</th>
+            <th>Reported By</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr id="loading-row"><td colspan="8"><i class="fas fa-spinner fa-spin mr-2"></i>Loading reports...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- USER DETAILS MODAL -->
+<div class="modal fade" id="user-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-user mr-2"></i>User Details</h5>
+        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" id="user-modal-body">
+        <div class="text-center py-3"><i class="fas fa-spinner fa-spin" style="color:var(--primary);font-size:24px;"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE MODAL -->
+<div id="modal-overlay" onclick="closeModal()">
+  <span id="modal-close">&times;</span>
+  <img id="modal-img" src="" alt="Pothole">
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+const STATUSES = ["Pending", "Reviewed", "Fixed"];
+
+function showUser(username) {
+    if (!username || username === 'N/A') return;
+    document.getElementById('user-modal-body').innerHTML =
+        '<div class="text-center py-3"><i class="fas fa-spinner fa-spin" style="color:var(--primary);font-size:24px;"></i></div>';
+    $('#user-modal').modal('show');
+    fetch('/admin/user/' + encodeURIComponent(username))
+        .then(r => r.json())
+        .then(u => {
+            if (u.error) { document.getElementById('user-modal-body').innerHTML = '<p class="text-danger">' + u.error + '</p>'; return; }
+            document.getElementById('user-modal-body').innerHTML = `
+              <div class="user-detail-row"><span class="user-detail-label">Username</span><span>${u.username}</span></div>
+              <div class="user-detail-row"><span class="user-detail-label">Email</span><span>${u.email || '-'}</span></div>
+              <div class="user-detail-row"><span class="user-detail-label">Phone</span><span>${u.phone || '-'}</span></div>
+              <div class="user-detail-row"><span class="user-detail-label">Total Reports</span><span class="user-stat-badge">${u.total}</span></div>
+              <div class="user-detail-row"><span class="user-detail-label">Pending</span><span style="color:#f39c12;font-weight:700;">${u.pending}</span></div>
+              <div class="user-detail-row"><span class="user-detail-label">Reviewed</span><span style="color:#3498db;font-weight:700;">${u.reviewed}</span></div>
+              <div class="user-detail-row"><span class="user-detail-label">Fixed</span><span style="color:#1DC9A4;font-weight:700;">${u.fixed}</span></div>
+            `;
+        });
+}
+
+function openModal(src) {
+    document.getElementById('modal-img').src = src;
+    document.getElementById('modal-overlay').classList.add('show');
+}
+function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('show');
+}
+
+function updateStatus(reportId, newStatus) {
+    fetch('/admin/update_status', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ report_id: reportId, status: newStatus })
+    }).then(() => {
+        const badge = document.getElementById('badge-' + reportId);
+        if (badge) { badge.className = 'badge-status badge-' + newStatus; badge.innerText = newStatus; }
+    });
+}
+
+function loadPotholes() {
+    document.getElementById('tbody').innerHTML =
+        '<tr id="loading-row"><td colspan="8" style="text-align:center;padding:30px;color:#6c757d;"><i class="fas fa-spinner fa-spin mr-2"></i>Loading reports...</td></tr>';
+
+    fetch('/admin/potholes')
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(data => {
+            // update stats
+            document.getElementById('stat-total').innerText = data.length;
+            document.getElementById('stat-severe').innerText = data.filter(p => p.severity === 'Severe').length;
+            document.getElementById('stat-pending').innerText = data.filter(p => p.status === 'Pending').length;
+            document.getElementById('stat-fixed').innerText = data.filter(p => p.status === 'Fixed').length;
+
+            if (!data.length) {
+                document.getElementById('tbody').innerHTML =
+                    '<tr><td colspan="8" style="text-align:center;padding:30px;color:#6c757d;">No records found</td></tr>';
+                return;
+            }
+            const rows = data.map((p, i) => {
+                const imgSrc = '/pothole_img/' + (p.image_filename || '');
+                const opts = STATUSES.map(s =>
+                    `<option value="${s}" ${p.status === s ? 'selected' : ''}>${s}</option>`
+                ).join('');
+                return `<tr>
+                  <td style="color:#6c757d;font-weight:600">${i + 1}</td>
+                  <td><img src="${imgSrc}" onclick="openModal('${imgSrc}')" onerror="this.style.display='none'" title="Click to enlarge"></td>
+                  <td><span class="badge-severity badge-${p.severity}">${p.severity}</span></td>
+                  <td style="color:#6c757d"><i class="fas fa-map-marker-alt mr-1" style="color:var(--primary)"></i>${p.address ? p.address + (p.pincode ? ' - ' + p.pincode : '') : (p.latitude + ', ' + p.longitude)}</td>
+                  <td>${p.detected_date || '-'}</td>
+                  <td>${p.detected_time || '-'}</td>
+                  <td><span class="user-link" onclick="showUser('${p.username || ''}')"><i class="fas fa-user mr-1" style="color:#adb5bd"></i>${p.username || 'N/A'}</span></td>
+                  <td>
+                    <select class="status-select" onchange="updateStatus(${p.report_id}, this.value)">${opts}</select>
+                    <span class="badge-status badge-${p.status}" id="badge-${p.report_id}">${p.status}</span>
+                  </td>
+                </tr>`;
+            });
+            document.getElementById('tbody').innerHTML = rows.join('');
+        })
+        .catch(err => {
+            document.getElementById('tbody').innerHTML =
+                `<tr><td colspan="8" style="text-align:center;padding:30px;color:#e74c3c;"><i class="fas fa-exclamation-circle mr-2"></i>Error: ${err.message}</td></tr>`;
+        });
+}
+
+loadPotholes();
+</script>
+</body>
+</html>

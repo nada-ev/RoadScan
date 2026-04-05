@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoadScan - Smart Road Detection</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  :root { --primary: #1DC9A4; --dark: #1a1a2e; }
+  body { font-family: 'Segoe UI', sans-serif; }
+
+  /* NAV */
+  .navbar { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.08); padding: 14px 0; }
+  .navbar-brand { font-weight: 800; font-size: 22px; color: var(--primary) !important; }
+  .navbar-brand span { color: var(--dark); }
+  .nav-link { font-weight: 600; color: #444 !important; margin: 0 6px; }
+  .nav-link:hover { color: var(--primary) !important; }
+  .btn-primary-custom {
+    background: var(--primary); color: #fff; border: none;
+    padding: 8px 24px; border-radius: 25px; font-weight: 600;
+    transition: .3s;
+  }
+  .btn-primary-custom:hover { background: #17a98a; color: #fff; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    min-height: 92vh; display: flex; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(29,201,164,0.15) 0%, transparent 70%);
+    top: -100px; right: -100px; border-radius: 50%;
+  }
+  .hero h1 { font-size: 52px; font-weight: 800; color: #fff; line-height: 1.2; }
+  .hero h1 span { color: var(--primary); }
+  .hero p { color: #adb5bd; font-size: 18px; margin: 20px 0 35px; }
+  .hero-badge {
+    display: inline-block; background: rgba(29,201,164,0.15);
+    color: var(--primary); padding: 6px 16px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; margin-bottom: 20px;
+    border: 1px solid rgba(29,201,164,0.3);
+  }
+  .hero-img-wrap {
+    background: rgba(255,255,255,0.05); border-radius: 20px;
+    padding: 30px; border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .hero-img-wrap i { font-size: 120px; color: var(--primary); opacity: .85; }
+
+  /* FEATURES */
+  .section-title { font-weight: 800; font-size: 36px; color: var(--dark); }
+  .section-title span { color: var(--primary); }
+  .section-sub { color: #6c757d; font-size: 16px; max-width: 500px; margin: 0 auto; }
+  .feature-card {
+    background: #fff; border-radius: 16px; padding: 36px 28px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07); transition: .3s;
+    border-bottom: 3px solid transparent; height: 100%;
+  }
+  .feature-card:hover { transform: translateY(-6px); border-bottom-color: var(--primary); }
+  .feature-icon {
+    width: 64px; height: 64px; background: rgba(29,201,164,0.12);
+    border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .feature-icon i { font-size: 26px; color: var(--primary); }
+  .feature-card h5 { font-weight: 700; color: var(--dark); margin-bottom: 10px; }
+  .feature-card p { color: #6c757d; font-size: 14px; margin: 0; }
+
+  /* LOGIN CARD */
+  .login-section { background: #f8f9fa; }
+  .login-card {
+    background: #fff; border-radius: 20px; padding: 48px 40px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.1); max-width: 440px; margin: 0 auto;
+  }
+  .login-card h3 { font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+  .login-card .sub { color: #6c757d; font-size: 14px; margin-bottom: 30px; }
+  .form-control {
+    border-radius: 10px; border: 1.5px solid #e9ecef;
+    padding: 12px 16px; font-size: 14px;
+  }
+  .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(29,201,164,0.15); }
+  .input-group-text {
+    background: #f8f9fa; border-radius: 10px 0 0 10px;
+    border: 1.5px solid #e9ecef; color: var(--primary);
+  }
+  .btn-login {
+    background: var(--primary); color: #fff; border: none;
+    border-radius: 10px; padding: 13px; font-weight: 700;
+    font-size: 15px; width: 100%; transition: .3s;
+  }
+  .btn-login:hover { background: #17a98a; }
+  .btn-register {
+    background: transparent; color: var(--primary);
+    border: 2px solid var(--primary); border-radius: 10px;
+    padding: 11px; font-weight: 700; font-size: 15px;
+    width: 100%; transition: .3s; text-decoration: none;
+    display: block; text-align: center;
+  }
+  .btn-register:hover { background: var(--primary); color: #fff; text-decoration: none; }
+  .divider { text-align: center; color: #adb5bd; margin: 16px 0; font-size: 13px; position: relative; }
+  .divider::before, .divider::after {
+    content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: #e9ecef;
+  }
+  .divider::before { left: 0; } .divider::after { right: 0; }
+  #msg { font-size: 13px; margin-top: 12px; min-height: 20px; }
+  .field-error { font-size: 12px; color: #e74c3c; margin-top: 4px; display: none; padding-left: 4px; }
+  .input-group.is-invalid .form-control { border-color: #e74c3c; }
+  .input-group.is-invalid .input-group-text { border-color: #e74c3c; }
+  .input-group.is-valid .form-control { border-color: #1DC9A4; }
+  .input-group.is-valid .input-group-text { border-color: #1DC9A4; }
+
+  /* STATS */
+  .stats-section { background: var(--primary); }
+  .stat-item h2 { font-size: 42px; font-weight: 800; color: #fff; }
+  .stat-item p { color: rgba(255,255,255,0.8); font-size: 15px; margin: 0; }
+
+  /* FOOTER */
+  footer { background: var(--dark); color: #adb5bd; }
+  footer .brand { font-size: 22px; font-weight: 800; color: var(--primary); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="fas fa-road mr-2"></i>Road<span>Scan</span></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ml-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="#login">Login</a></li>
+        <li class="nav-item ml-2">
+          <a href="/register" class="btn-primary-custom">Register</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <div class="hero-badge"><i class="fas fa-satellite-dish mr-1"></i> AI-Powered Detection</div>
+        <h1>Smart <span>Pothole</span> Detection System</h1>
+        <p>Upload road videos and let our AI detect, classify, and report potholes automatically — keeping roads safer for everyone.</p>
+        <a href="#login" class="btn btn-lg mr-3" style="background:var(--primary);color:#fff;border-radius:30px;font-weight:700;padding:14px 36px;">Get Started</a>
+        <a href="#features" class="btn btn-lg" style="border:2px solid rgba(255,255,255,0.3);color:#fff;border-radius:30px;font-weight:700;padding:14px 36px;">Learn More</a>
+      </div>
+      <div class="col-lg-5 offset-lg-1">
+        <div class="hero-img-wrap">
+          <i class="fas fa-road"></i>
+          <p class="mt-3 mb-0" style="color:rgba(255,255,255,0.5);font-size:13px;">Real-time video analysis</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section py-5">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-md-4 stat-item mb-4 mb-md-0">
+        <h2>AI</h2><p>YOLO-powered detection</p>
+      </div>
+      <div class="col-md-4 stat-item mb-4 mb-md-0">
+        <h2>3</h2><p>Severity levels classified</p>
+      </div>
+      <div class="col-md-4 stat-item">
+        <h2>Live</h2><p>Real-time video streaming</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="py-6 py-5" id="features" style="background:#f8f9fa;">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">Why <span>RoadScan?</span></h2>
+      <p class="section-sub mt-3">Everything you need to detect, report and manage road damage efficiently.</p>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-video"></i></div>
+          <h5>Video Detection</h5>
+          <p>Upload road footage and watch our AI detect potholes frame by frame in real time.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-exclamation-triangle"></i></div>
+          <h5>Severity Classification</h5>
+          <p>Each pothole is automatically classified as Minor, Moderate, or Severe based on size.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-database"></i></div>
+          <h5>Auto Reporting</h5>
+          <p>Detected potholes are instantly saved to the database with location, time and image.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <h5>GPS Location</h5>
+          <p>Every report is tagged with GPS coordinates for precise road damage mapping.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-user-shield"></i></div>
+          <h5>Admin Control</h5>
+          <p>Admins can view all reports, see pothole images and update repair status.</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-broadcast-tower"></i></div>
+          <h5>Live Streaming</h5>
+          <p>Watch detection happen live as the video is processed — no waiting required.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGIN -->
+<section class="login-section py-5" id="login">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">Welcome <span>Back</span></h2>
+      <p class="section-sub mt-3">Login to access your dashboard and start detecting potholes.</p>
+    </div>
+    <div class="login-card">
+      <h3>Sign In</h3>
+      <p class="sub">Enter your credentials to continue</p>
+      <div class="input-group mb-1" id="grp-user">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fas fa-user"></i></span>
+        </div>
+        <input type="text" id="l_user" class="form-control" placeholder="Username" oninput="clearErr('grp-user','err-user')">
+      </div>
+      <div class="field-error" id="err-user">Username is required.</div>
+      <div class="input-group mb-1 mt-3" id="grp-pass">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fas fa-lock"></i></span>
+        </div>
+        <input type="password" id="l_pass" class="form-control" placeholder="Password" oninput="clearErr('grp-pass','err-pass')">
+      </div>
+      <div class="field-error" id="err-pass">Password is required.</div>
+      <button class="btn-login" onclick="login()">
+        <i class="fas fa-sign-in-alt mr-2"></i>Login
+      </button>
+      <p id="msg" class="text-danger text-center"></p>
+      <div class="divider">or</div>
+      <a href="/register" class="btn-register">
+        <i class="fas fa-user-plus mr-2"></i>Create an Account
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-4">
+  <div class="container text-center">
+    <div class="brand mb-2"><i class="fas fa-road mr-1"></i>RoadScan</div>
+    <p style="font-size:13px;">© 2026 RoadScan. Smart road safety detection system.</p>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+function showErr(groupId, errId, msg) {
+    document.getElementById(groupId).classList.add('is-invalid');
+    const e = document.getElementById(errId);
+    e.innerText = msg; e.style.display = 'block';
+}
+function clearErr(groupId, errId) {
+    document.getElementById(groupId).classList.remove('is-invalid');
+    document.getElementById(errId).style.display = 'none';
+}
+function validateLogin() {
+    let valid = true;
+    const user = document.getElementById('l_user').value.trim();
+    const pass = document.getElementById('l_pass').value;
+    if (!user) { showErr('grp-user','err-user','Username is required.'); valid = false; }
+    if (!pass) { showErr('grp-pass','err-pass','Password is required.'); valid = false; }
+    return valid;
+}
+function login() {
+    if (!validateLogin()) return;
+    const btn = document.querySelector('.btn-login');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Signing in...';
+    btn.disabled = true;
+    fetch('/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: l_user.value.trim(), password: l_pass.value })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.role === 'admin' ? '/admin_dashboard' : '/dashboard';
+        } else {
+            document.getElementById('msg').innerText = 'Invalid username or password.';
+            document.getElementById('grp-user').classList.add('is-invalid');
+            document.getElementById('grp-pass').classList.add('is-invalid');
+            btn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Login';
+            btn.disabled = false;
+        }
+    });
+}
+document.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Login</title>
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(to right, #232526, #414345);
+    color: white;
+    text-align: center;
+}
+.container { margin-top: 80px; }
+input {
+    padding: 10px;
+    margin: 8px;
+    border-radius: 5px;
+    border: none;
+    width: 220px;
+}
+button {
+    padding: 10px 20px;
+    background: #e74c3c;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.card {
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    margin: 20px auto;
+    border-radius: 10px;
+    display: inline-block;
+}
+a { color: #aaa; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔐 Admin Login</h1>
+  <div class="card">
+    <input id="username" placeholder="Admin Username"><br>
+    <input id="password" type="password" placeholder="Password"><br>
+    <button onclick="adminLogin()">Login</button>
+    <p id="msg"></p>
+    <a href="/">← Back</a>
+  </div>
+</div>
+
+<script>
+function adminLogin() {
+    fetch('/admin_login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/admin_dashboard';
+        } else {
+            document.getElementById('msg').innerText = '❌ Invalid credentials';
+        }
+    });
+}
+</script>
+</body>
+</html>

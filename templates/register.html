@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - RoadScan</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  :root { --primary: #1DC9A4; --dark: #1a1a2e; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+    min-height: 100vh; display: flex; align-items: center;
+  }
+  .register-wrap { width: 100%; padding: 40px 16px; }
+  .register-card {
+    background: #fff; border-radius: 20px; padding: 48px 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 480px; margin: 0 auto;
+  }
+  .brand { font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+  .register-card h3 { font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .register-card .sub { color: #6c757d; font-size: 14px; margin-bottom: 28px; }
+  .form-control {
+    border-radius: 10px; border: 1.5px solid #e9ecef;
+    padding: 12px 16px; font-size: 14px;
+  }
+  .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(29,201,164,0.15); }
+  .input-group-text {
+    background: #f8f9fa; border-radius: 10px 0 0 10px;
+    border: 1.5px solid #e9ecef; color: var(--primary);
+  }
+  .btn-register {
+    background: var(--primary); color: #fff; border: none;
+    border-radius: 10px; padding: 13px; font-weight: 700;
+    font-size: 15px; width: 100%; transition: .3s;
+  }
+  .btn-register:hover { background: #17a98a; }
+  .login-link { text-align: center; margin-top: 20px; font-size: 14px; color: #6c757d; }
+  .login-link a { color: var(--primary); font-weight: 600; text-decoration: none; }
+  #msg { font-size: 13px; margin-top: 12px; min-height: 20px; text-align: center; }
+  .field-error { font-size: 12px; color: #e74c3c; margin-top: 4px; display: none; padding-left: 4px; }
+  .input-group.is-invalid .form-control,
+  .input-group.is-invalid .input-group-text { border-color: #e74c3c; }
+  .input-group.is-valid .form-control,
+  .input-group.is-valid .input-group-text { border-color: #1DC9A4; }
+  .pass-strength { height: 4px; border-radius: 4px; margin-top: 6px; transition: .3s; background: #e9ecef; }
+  .pass-strength-label { font-size: 11px; margin-top: 3px; display: none; }
+</style>
+</head>
+<body>
+<div class="register-wrap">
+  <div class="register-card">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <div class="brand"><i class="fas fa-road mr-1"></i>RoadScan</div>
+      <a href="/" style="font-size:13px;color:#6c757d;text-decoration:none;"><i class="fas fa-home mr-1"></i>Home</a>
+    </div>
+    <h3>Create Account</h3>
+    <p class="sub">Join us to start reporting road damage</p>
+
+    <div class="input-group mb-1" id="grp-user">
+      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-user"></i></span></div>
+      <input type="text" id="r_user" class="form-control" placeholder="Username" oninput="clearErr('grp-user','err-user')">
+    </div>
+    <div class="field-error" id="err-user"></div>
+
+    <div class="input-group mb-1 mt-3" id="grp-email">
+      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-envelope"></i></span></div>
+      <input type="email" id="r_email" class="form-control" placeholder="Email address" oninput="clearErr('grp-email','err-email')">
+    </div>
+    <div class="field-error" id="err-email"></div>
+
+    <div class="input-group mb-1 mt-3" id="grp-phone">
+      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-phone"></i></span></div>
+      <input type="text" id="r_phone" class="form-control" placeholder="Phone number (10 digits)" oninput="clearErr('grp-phone','err-phone')">
+    </div>
+    <div class="field-error" id="err-phone"></div>
+
+    <div class="input-group mb-1 mt-3" id="grp-pass">
+      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-lock"></i></span></div>
+      <input type="password" id="r_pass" class="form-control" placeholder="Password (min 6 chars)" oninput="checkStrength(); clearErr('grp-pass','err-pass')">
+    </div>
+    <div class="pass-strength" id="pass-strength"></div>
+    <div class="pass-strength-label" id="pass-label"></div>
+    <div class="field-error" id="err-pass"></div>
+
+    <div class="input-group mb-1 mt-3" id="grp-confirm">
+      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-lock"></i></span></div>
+      <input type="password" id="r_confirm" class="form-control" placeholder="Confirm password" oninput="clearErr('grp-confirm','err-confirm')">
+    </div>
+    <div class="field-error" id="err-confirm"></div>
+
+    <button class="btn-register mt-3" onclick="register()">
+      <i class="fas fa-user-plus mr-2"></i>Register
+    </button>
+    <p id="msg"></p>
+    <div class="login-link">Already have an account? <a href="/">Sign in</a></div>
+  </div>
+</div>
+
+<script>
+function showErr(groupId, errId, msg) {
+    document.getElementById(groupId).classList.add('is-invalid');
+    const e = document.getElementById(errId);
+    e.innerText = msg; e.style.display = 'block';
+}
+function clearErr(groupId, errId) {
+    document.getElementById(groupId).classList.remove('is-invalid');
+    document.getElementById(errId).style.display = 'none';
+}
+function checkStrength() {
+    const val = document.getElementById('r_pass').value;
+    const bar = document.getElementById('pass-strength');
+    const lbl = document.getElementById('pass-label');
+    lbl.style.display = 'block';
+    if (val.length === 0) { bar.style.background = '#e9ecef'; lbl.innerText = ''; lbl.style.display='none'; return; }
+    if (val.length < 6) { bar.style.background = '#e74c3c'; bar.style.width='33%'; lbl.style.color='#e74c3c'; lbl.innerText='Weak'; }
+    else if (val.length < 10 || !/[0-9]/.test(val)) { bar.style.background = '#f39c12'; bar.style.width='66%'; lbl.style.color='#f39c12'; lbl.innerText='Moderate'; }
+    else { bar.style.background = '#1DC9A4'; bar.style.width='100%'; lbl.style.color='#1DC9A4'; lbl.innerText='Strong'; }
+}
+function validate() {
+    let valid = true;
+    const user  = document.getElementById('r_user').value.trim();
+    const email = document.getElementById('r_email').value.trim();
+    const phone = document.getElementById('r_phone').value.trim();
+    const pass  = document.getElementById('r_pass').value;
+    const conf  = document.getElementById('r_confirm').value;
+
+    if (!user || user.length < 3) { showErr('grp-user','err-user','Username must be at least 3 characters.'); valid=false; }
+    else if (!/^[a-zA-Z0-9_]+$/.test(user)) { showErr('grp-user','err-user','Only letters, numbers and underscores allowed.'); valid=false; }
+
+    if (!email) { showErr('grp-email','err-email','Email is required.'); valid=false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('grp-email','err-email','Enter a valid email address.'); valid=false; }
+
+    if (!phone) { showErr('grp-phone','err-phone','Phone number is required.'); valid=false; }
+    else if (!/^\d{10}$/.test(phone)) { showErr('grp-phone','err-phone','Enter a valid 10-digit phone number.'); valid=false; }
+
+    if (!pass || pass.length < 6) { showErr('grp-pass','err-pass','Password must be at least 6 characters.'); valid=false; }
+
+    if (!conf) { showErr('grp-confirm','err-confirm','Please confirm your password.'); valid=false; }
+    else if (pass !== conf) { showErr('grp-confirm','err-confirm','Passwords do not match.'); valid=false; }
+
+    return valid;
+}
+function register() {
+    if (!validate()) return;
+    const btn = document.querySelector('.btn-register');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Registering...';
+    btn.disabled = true;
+    fetch('/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            username: r_user.value.trim(), email: r_email.value.trim(),
+            phone: r_phone.value.trim(), password: r_pass.value
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        const msg = document.getElementById('msg');
+        if (data.message) {
+            msg.style.color = '#1DC9A4';
+            msg.innerText = '✅ ' + data.message + ' Redirecting...';
+            setTimeout(() => window.location.href = '/', 1500);
+        } else {
+            msg.style.color = '#e74c3c';
+            msg.innerText = '❌ ' + data.error;
+            btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Register';
+            btn.disabled = false;
+        }
+    });
+}
+</script>
+</body>
+</html>
